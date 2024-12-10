@@ -7,9 +7,11 @@ print("SpecGen " + specgen_version)
 parser = argparse.ArgumentParser(description="Decode PE files into WINE .spec files.")
 parser.add_argument("-f", "--file", help="Path to the DLL to parse.", default="")
 parser.add_argument("-s", "--spec", help="Existing .spec file to add missing syms to.", default="")
+parser.add_argument("-o", "--out", help="File to write the generated .spec to.", default="generated.spec")
 
 args = parser.parse_args()
 target_file = args.file
+out_spec = args.out
 pe = pefile.PE(target_file, fast_load=True)
 
 print("Parsed " + target_file + " - Dumping symbols")
@@ -64,7 +66,6 @@ try:
 except FileNotFoundError:
   spec = SpecFile(None)
 
-out_spec = "generated.spec"
 with open (out_spec, "w") as f:
   pe.parse_data_directories()
   for exp in pe.DIRECTORY_ENTRY_EXPORT.symbols:
