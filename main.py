@@ -19,17 +19,25 @@ print("Parsed " + target_file + " - Dumping symbols")
 class SpecFile():
   def __init__(self, content: str | None):
     self.syms: list[str] = []
+    self.stubs: list[str] = []
     if type(content) is str:
       for line in content.splitlines():
         #if not line.startswith("@"):
         #  continue
         self.syms.append(line)
+        if line.startswith("@ stub"):
+          self.stubs.append(line)
 
   def add_sym_str(self, sym_str: str):
     self.syms.append(sym_str)
     
   def add_sym_if_not_present(self, sym_str: str):
-    for sym in self.syms:
+    target: list[str]
+    if sym_str.startswith("@ stub"):
+      target = self.stubs
+    else:
+      target = self.syms
+    for sym in target:
       if not sym.startswith("@"):
         continue
       old_split = sym.split(" ")
