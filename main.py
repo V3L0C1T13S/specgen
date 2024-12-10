@@ -69,7 +69,7 @@ with open ("generated.spec", "w") as f:
   pe.parse_data_directories()
   for exp in pe.DIRECTORY_ENTRY_EXPORT.symbols:
     print(hex(pe.OPTIONAL_HEADER.ImageBase + exp.address), exp.name, exp.ordinal)
-    if type(exp.name) is None:
+    if exp.name is None:
         continue
     spec.add_sym_if_not_present("@ stub " + exp.name.decode("utf-8") + " # off " + str(hex(pe.OPTIONAL_HEADER.ImageBase + exp.address)) + ", ordinal " + str(exp.ordinal))
   f.write("# Generated with SpecGen " + specgen_version + "\n")
