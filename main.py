@@ -64,7 +64,8 @@ try:
 except FileNotFoundError:
   spec = SpecFile(None)
 
-with open ("generated.spec", "w") as f:
+out_spec = "generated.spec"
+with open (out_spec, "w") as f:
   pe.parse_data_directories()
   for exp in pe.DIRECTORY_ENTRY_EXPORT.symbols:
     print(hex(pe.OPTIONAL_HEADER.ImageBase + exp.address), exp.name, exp.ordinal)
@@ -73,3 +74,4 @@ with open ("generated.spec", "w") as f:
     spec.add_sym_if_not_present("@ stub " + exp.name.decode("utf-8") + " # off " + str(hex(pe.OPTIONAL_HEADER.ImageBase + exp.address)) + ", ordinal " + str(exp.ordinal))
   f.write("# Generated with SpecGen " + specgen_version + "\n")
   f.write(spec.serialize())
+  print("Wrote new spec to " + out_spec)
