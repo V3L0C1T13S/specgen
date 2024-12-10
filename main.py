@@ -22,34 +22,37 @@ class SpecFile():
     self.syms: list[str] = []
     if type(content) is str:
       for line in content.splitlines():
-        #if not line.startswith("@"):
-        #  continue
         self.syms.append(line)
 
-  def add_sym_str(self, sym_str: str):
-    self.syms.append(sym_str)
-    
-  def add_sym_if_not_present(self, sym_str: str):
+  @staticmethod
+  def get_sym_line_without_args(sym: str):
+    split: list[str] = []
+    for word in sym.split(" "):
+      if word.startswith("-"):
+        continue
+      split.append(word)
+    return split
+
+  def get_sym_names(self):
     for sym in self.syms:
       if not sym.startswith("@"):
         continue
-      old_split = sym.split(" ")
-      new_split: list[str] = []
-      for word in old_split:
-        if word.startswith("-"):
-          continue
-        new_split.append(word)
-      sym_name = new_split[2]
+      sym_name = self.get_sym_line_without_args(sym)[2]
       stop_offset: int | None = None
       for i, char in enumerate(sym_name):
-        #print("char: " + char + ", i: " + str(i))
         if char == "(":
           stop_offset = i
           break
       if type(stop_offset) is int:
         sym_name = sym_name[:stop_offset]
+      yield sym_name
+
+  def add_sym_str(self, sym_str: str):
+    self.syms.append(sym_str)
+    
+  def add_sym_if_not_present(self, sym_str: str):
+    for sym_name in self.get_sym_names():
       new_sym_name = sym_str.split(" ")[2]
-      #print("sym: " + sym_name + ", new_sym: " + new_sym_name)
       if sym_name == new_sym_name:
         return
     self.add_sym_str(sym_str)
