@@ -1,5 +1,4 @@
 import pefile
-import sys
 import argparse
 
 specgen_version = "1.0"
